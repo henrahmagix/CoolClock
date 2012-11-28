@@ -36,7 +36,8 @@ CoolClock.config = {
 			hourHand: { lineWidth: 8, startAt: -15, endAt: 50, color: "black", alpha: 1 },
 			minuteHand: { lineWidth: 7, startAt: -15, endAt: 75, color: "black", alpha: 1 },
 			secondHand: { lineWidth: 1, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", color: "red", alpha: 1 }
+			secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", color: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", color: "black", alpha: 1 }
 		},
 		chunkySwiss: {
 			outerBorder: { lineWidth: 4, radius:97, color: "black", alpha: 1 },
@@ -45,7 +46,8 @@ CoolClock.config = {
 			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, color: "black", alpha: 1 },
 			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, color: "black", alpha: 1 },
 			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 }
+			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", color: "black", alpha: 1 }
 		},
 		chunkySwissOnBlack: {
 			outerBorder: { lineWidth: 4, radius:97, color: "white", alpha: 1 },
@@ -54,7 +56,8 @@ CoolClock.config = {
 			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, color: "white", alpha: 1 },
 			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, color: "white", alpha: 1 },
 			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 }
+			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", color: "black", alpha: 1 }
 		}
 
 	},
@@ -82,7 +85,10 @@ CoolClock.prototype = {
 		this.renderRadius   = options.renderRadius || CoolClock.config.renderRadius;
 		this.showSecondHand = typeof options.showSecondHand == "boolean" ? options.showSecondHand : true;
 		this.gmtOffset      = (options.gmtOffset != null && options.gmtOffset != '') ? parseFloat(options.gmtOffset) : null;
+		this.showNumbers    = typeof options.showNumbers == "boolean" ? options.showNumbers : false;
 		this.showDigital    = typeof options.showDigital == "boolean" ? options.showDigital : false;
+		this.showSecs       = typeof options.showSecs == "boolean" ? options.showSecs : true;
+		this.showAmPm       = typeof options.showAmPm == "boolean" ? options.showAmPm : true;
 		this.logClock       = typeof options.logClock == "boolean" ? options.logClock : false;
 		this.logClockRev    = typeof options.logClock == "boolean" ? options.logClockRev : false;
 
@@ -157,17 +163,31 @@ CoolClock.prototype = {
 	},
 
 	// Draw some text centered vertically and horizontally
-	drawTextAt: function(theText,x,y,skin) {
+	drawTextAt: function(text, x, y, skin) {
 		if (!skin) skin = this.getSkin();
 		this.ctx.save();
 		this.ctx.font = skin.font || this.font;
-		var tSize = this.ctx.measureText(theText);
+
+		// Determine the draw position so text is centered at x,y.
+		var tSize = this.ctx.measureText(text);
+		x -= tSize.width / 2;
 		// TextMetrics rarely returns a height property: use baseline instead.
 		if (!tSize.height) {
 			tSize.height = 0;
 			this.ctx.textBaseline = 'middle';
 		}
-		this.ctx.fillText(theText, x - tSize.width/2, y - tSize.height/2);
+		y -= tSize.height / 2;
+
+		// Color the text. Both fill and stroke allowed; stroke above fill.
+		if (skin.fillColor) {
+			this.ctx.fillStyle = skin.fillColor;
+			this.ctx.fillText(text, x, y);
+		}
+		if (skin.color) {
+			this.ctx.strokeStyle = skin.color;
+			this.ctx.strokeText(text, x, y);
+		}
+
 		this.ctx.restore();
 	},
 
@@ -192,38 +212,66 @@ CoolClock.prototype = {
 	},
 
 	timeText: function(hour,min,sec) {
-		var c = CoolClock.config;
-		return '' +
-			(c.showAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
+		var time = '' +
+			(this.showAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
 			this.lpad2(min) +
-			(c.showSecs ? ':' + this.lpad2(sec) : '') +
-			(c.showAmPm ? (hour < 12 ? ' am' : ' pm') : '')
+			(this.showSecs ? ':' + this.lpad2(sec) : '') +
+			(this.showAmPm ? (hour < 12 ? ' am' : ' pm') : '')
 		;
+		return time;
 	},
 
 	// Draw a radial line by rotating then drawing a straight line
 	// Ha ha, I think I've accidentally used Taus, (see http://tauday.com/)
-	radialLineAtAngle: function(angleFraction,skin) {
+	radialLineAtAngle: function(angleFraction, skin) {
 		this.ctx.save();
-		this.ctx.translate(this.renderRadius,this.renderRadius);
-		this.ctx.rotate(Math.PI * (2.0 * angleFraction - 0.5));
 		this.ctx.globalAlpha = skin.alpha;
 		this.ctx.strokeStyle = skin.color;
 		this.ctx.lineWidth = skin.lineWidth;
 
-		if (CoolClock.config.isIE)
+		// Move the canvas to the center and rotate so +x is the radius.
+		this.ctx.translate(this.renderRadius,this.renderRadius);
+		this.ctx.rotate(Math.PI * (2.0 * angleFraction - 0.5));
+
+		if (CoolClock.config.isIE) {
 			// excanvas doesn't scale line width so we will do it here
 			this.ctx.lineWidth = this.ctx.lineWidth * this.scale;
+		}
 
 		if (skin.radius) {
-			this.fullCircleAt(skin.startAt,0,skin)
+			this.fullCircleAt(skin.startAt,0,skin);
 		}
 		else {
 			this.ctx.beginPath();
-			this.ctx.moveTo(skin.startAt,0)
+			this.ctx.moveTo(skin.startAt,0);
 			this.ctx.lineTo(skin.endAt,0);
 			this.ctx.stroke();
 		}
+		this.ctx.restore();
+	},
+
+	textAtAngle: function(text, angleFraction, skin) {
+		this.ctx.save();
+
+		this.ctx.globalAlpha = skin.alpha;
+		this.ctx.lineWidth = skin.lineWidth;
+
+		// Move the canvas to the center and rotate so +x is the radius.
+		this.ctx.translate(this.renderRadius,this.renderRadius);
+		var radial = Math.PI * (2.0 * angleFraction - 0.5);
+		this.ctx.rotate(radial);
+		// Now move along the radial and reset the rotation.
+		this.ctx.translate(skin.startAt, 0);
+		this.ctx.rotate(-radial);
+
+		if (CoolClock.config.isIE) {
+			// excanvas doesn't scale line width so we will do it here
+			this.ctx.lineWidth = this.ctx.lineWidth * this.scale;
+		}
+
+		// Draw the text.
+		this.drawTextAt(text, 0, 0, skin);
+
 		this.ctx.restore();
 	},
 
@@ -244,13 +292,20 @@ CoolClock.prototype = {
 			!(i%5) && skin.largeIndicator && this.radialLineAtAngle(this.tickAngle(i),skin.largeIndicator);
 		}
 
+		// Draw 1-12 on the clock face.
+		if (this.showNumbers && skin.numbers) {
+            for (var i = 1; i <= 12; i++) {
+                angle = this.tickAngle(i * 5);
+                this.textAtAngle(i, angle, skin.numbers);
+            };
+		}
+
 		// Write the time
-		if (this.showDigital) {
-			this.drawTextAt(
-				this.timeText(hour,min,sec),
-				this.renderRadius,
-				this.renderRadius+this.renderRadius/2
-			);
+		if (this.showDigital && skin.digital) {
+			var digiText = this.timeText(hour,min,sec),
+				digiX = skin.digital.posX || this.renderRadius,
+				digiY = skin.digital.posY || this.renderRadius * 1.5;
+			this.drawTextAt(digiText, digiX, digiY, skin.digital);
 		}
 		
 		var hourA = (hour%12)*5 + min/12.0,
