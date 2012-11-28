@@ -30,34 +30,34 @@ CoolClock.config = {
 		// There are more skins in moreskins.js
 		// Try making your own skin by copy/pasting one of these and tweaking it
 		swissRail: {
-			outerBorder: { lineWidth: 2, radius:95, color: "black", alpha: 1 },
-			smallIndicator: { lineWidth: 2, startAt: 88, endAt: 92, color: "black", alpha: 1 },
-			largeIndicator: { lineWidth: 4, startAt: 79, endAt: 92, color: "black", alpha: 1 },
-			hourHand: { lineWidth: 8, startAt: -15, endAt: 50, color: "black", alpha: 1 },
-			minuteHand: { lineWidth: 7, startAt: -15, endAt: 75, color: "black", alpha: 1 },
-			secondHand: { lineWidth: 1, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", color: "red", alpha: 1 },
-			digital: { lineWidth: 0, fillColor: "black", color: "black", alpha: 1 }
+			outerBorder: { lineWidth: 2, radius:95, strokeColor: "black", alpha: 1 },
+			smallIndicator: { lineWidth: 2, startAt: 88, endAt: 92, strokeColor: "black", alpha: 1 },
+			largeIndicator: { lineWidth: 4, startAt: 79, endAt: 92, strokeColor: "black", alpha: 1 },
+			hourHand: { lineWidth: 8, startAt: -15, endAt: 50, strokeColor: "black", alpha: 1 },
+			minuteHand: { lineWidth: 7, startAt: -15, endAt: 75, strokeColor: "black", alpha: 1 },
+			secondHand: { lineWidth: 1, startAt: -20, endAt: 85, strokeColor: "red", alpha: 1 },
+			secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", strokeColor: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", strokeColor: "black", alpha: 1 }
 		},
 		chunkySwiss: {
-			outerBorder: { lineWidth: 4, radius:97, color: "black", alpha: 1 },
-			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, color: "black", alpha: 1 },
-			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, color: "black", alpha: 1 },
-			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, color: "black", alpha: 1 },
-			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, color: "black", alpha: 1 },
-			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 },
-			digital: { lineWidth: 0, fillColor: "black", color: "black", alpha: 1 }
+			outerBorder: { lineWidth: 4, radius:97, strokeColor: "black", alpha: 1 },
+			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, strokeColor: "black", alpha: 1 },
+			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, strokeColor: "black", alpha: 1 },
+			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, strokeColor: "black", alpha: 1 },
+			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, strokeColor: "black", alpha: 1 },
+			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, strokeColor: "red", alpha: 1 },
+			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", strokeColor: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", strokeColor: "black", alpha: 1 }
 		},
 		chunkySwissOnBlack: {
-			outerBorder: { lineWidth: 4, radius:97, color: "white", alpha: 1 },
-			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, color: "white", alpha: 1 },
-			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, color: "white", alpha: 1 },
-			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, color: "white", alpha: 1 },
-			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, color: "white", alpha: 1 },
-			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 },
-			digital: { lineWidth: 0, fillColor: "black", color: "black", alpha: 1 }
+			outerBorder: { lineWidth: 4, radius:97, strokeColor: "white", alpha: 1 },
+			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, strokeColor: "white", alpha: 1 },
+			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, strokeColor: "white", alpha: 1 },
+			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, strokeColor: "white", alpha: 1 },
+			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, strokeColor: "white", alpha: 1 },
+			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, strokeColor: "red", alpha: 1 },
+			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", strokeColor: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", strokeColor: "black", alpha: 1 }
 		}
 
 	},
@@ -155,8 +155,8 @@ CoolClock.prototype = {
 			this.ctx.fillStyle = skin.fillColor
 			this.ctx.fill();
 		}
-		if (skin.color) {
-			this.ctx.strokeStyle = skin.color;
+		if (skin.strokeColor || skin.color) {
+			this.ctx.strokeStyle = skin.strokeColor || skin.color;
 			this.ctx.stroke();
 		}
 		this.ctx.restore();
@@ -183,8 +183,8 @@ CoolClock.prototype = {
 			this.ctx.fillStyle = skin.fillColor;
 			this.ctx.fillText(text, x, y);
 		}
-		if (skin.color) {
-			this.ctx.strokeStyle = skin.color;
+		if (skin.strokeColor || skin.color) {
+			this.ctx.strokeStyle = skin.strokeColor || skin.color;
 			this.ctx.strokeText(text, x, y);
 		}
 
@@ -226,13 +226,8 @@ CoolClock.prototype = {
 	radialLineAtAngle: function(angleFraction, skin) {
 		this.ctx.save();
 		this.ctx.globalAlpha = skin.alpha;
-		this.ctx.strokeStyle = skin.color;
-
-		// Clock hand skinning uses stroke rather than fill, but we are now
-		// drawing shapes to fill and/or stroke. Therefore, only set the canvas
-		// lineWidth if the skin designates both stroke and fill.
-		var strokeAndFill = (skin.fillColor && skin.color);
-		this.ctx.lineWidth = (strokeAndFill) ? skin.lineWidth : 0;
+		this.ctx.strokeStyle = skin.strokeColor || skin.color;
+		this.ctx.lineWidth = skin.lineWidth;
 
 		// Move the canvas to the center and rotate so +x is the radius.
 		this.ctx.translate(this.renderRadius,this.renderRadius);
