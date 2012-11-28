@@ -226,7 +226,6 @@ CoolClock.prototype = {
 	radialLineAtAngle: function(angleFraction, skin) {
 		this.ctx.save();
 		this.ctx.globalAlpha = skin.alpha;
-		this.ctx.strokeStyle = skin.strokeColor || skin.color;
 		this.ctx.lineWidth = skin.lineWidth;
 
 		// Move the canvas to the center and rotate so +x is the radius.
@@ -243,9 +242,36 @@ CoolClock.prototype = {
 		}
 		else {
 			this.ctx.beginPath();
-			this.ctx.moveTo(skin.startAt,0);
-			this.ctx.lineTo(skin.endAt,0);
-			this.ctx.stroke();
+
+			// 
+			if (skin.startWidth || skin.endWidth) {
+				// Half the width to get positive and negative y value. Default
+				// to 0.
+				var startY = (skin.startWidth === undefined) ? 0 : skin.startWidth / 2;
+				var endY = (skin.endWidth === undefined) ? 0 : skin.endWidth / 2;
+				// Draw a shape.
+				this.ctx.moveTo(skin.startAt, startY);
+				this.ctx.lineTo(skin.endAt, endY);
+				// Use negative start and end y values to mirror the above.
+				this.ctx.lineTo(skin.endAt, -endY);
+				this.ctx.lineTo(skin.startAt, -startY);
+				// Close to ensure consistent stroke path.
+				this.ctx.closePath();
+			}
+			else {
+				// Draw a line and stroke it.
+				this.ctx.moveTo(skin.startAt,0);
+				this.ctx.lineTo(skin.endAt,0);
+			}
+			
+			if (skin.fillColor) {
+				this.ctx.fillStyle = skin.fillColor;
+				this.ctx.fill();
+			}
+			if (skin.strokeColor || skin.color) {
+				this.ctx.strokeStyle = skin.strokeColor || skin.color;
+				this.ctx.stroke();
+			}
 		}
 		this.ctx.restore();
 	},
