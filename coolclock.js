@@ -227,7 +227,12 @@ CoolClock.prototype = {
 		this.ctx.save();
 		this.ctx.globalAlpha = skin.alpha;
 		this.ctx.strokeStyle = skin.color;
-		this.ctx.lineWidth = skin.lineWidth;
+
+		// Clock hand skinning uses stroke rather than fill, but we are now
+		// drawing shapes to fill and/or stroke. Therefore, only set the canvas
+		// lineWidth if the skin designates both stroke and fill.
+		var strokeAndFill = (skin.fillColor && skin.color);
+		this.ctx.lineWidth = (strokeAndFill) ? skin.lineWidth : 0;
 
 		// Move the canvas to the center and rotate so +x is the radius.
 		this.ctx.translate(this.renderRadius,this.renderRadius);
