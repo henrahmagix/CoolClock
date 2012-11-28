@@ -318,28 +318,57 @@ CoolClock.prototype = {
 
 // Find all canvas elements that have the CoolClock class and turns them into clocks
 CoolClock.findAndCreateClocks = function() {
-	// (Let's not use a jQuery selector here so it's easier to use frameworks other than jQuery)
+	// Let's not use a jQuery selector here so it's easier to use frameworks
+	// other than jQuery.
 	var canvases = document.getElementsByTagName("canvas");
+	console.log(canvases[2])
+	console.log(canvases[2].dataset)
 	for (var i=0;i<canvases.length;i++) {
-		// Pull out the fields from the class. Example "CoolClock:chunkySwissOnBlack:1000"
-		var fields = canvases[i].className.split(" ")[0].split(":");
-		if (fields[0] == "CoolClock") {
+		// Pull out the fields from data attributes that begin data-coolclock.
+		// Example data-coolclock="true" data-coolclock-skin="chunkySwissOnBlack"
+		var data = canvases[i].dataset;
+		var settings = {};
+		for (var key in data) {
+			console.log(key, getClockOpt(key));
+			settings[getClockOpt(key)] = data[key];
+		}
+		console.log(settings)
+		if (data.hasOwnProperty('coolclock')) {
 			if (!canvases[i].id) {
 				// If there's no id on this canvas element then give it one
 				canvases[i].id = '_coolclock_auto_id_' + CoolClock.config.noIdCount++;
 			}
 			// Create a clock object for this element
 			new CoolClock({
-				canvasId:       canvases[i].id,
-				skinId:         fields[1],
-				displayRadius:  fields[2],
-				showSecondHand: fields[3]!='noSeconds',
-				gmtOffset:      fields[4],
-				showDigital:    fields[5]=='showDigital',
-				logClock:       fields[6]=='logClock',
-				logClockRev:    fields[6]=='logClockRev'
+				canvasId:        canvases[i].id,
+				skinId:          data.coolclockSkin,
+				displayRadius:   data.coolclockDisplayRadius,
+				renderRadius:    data.coolclockRenderRadius,
+				showSecondHand:  ! bool(data.coolclockNoSeconds),
+				gmtOffset:       data.coolclockGmtOffset,
+				showDigital:     bool(data.coolclockShowDigital),
+				showDigitalSecs: bool(data.coolclockShowDigitalSecs),
+				showDigitalAmPm: bool(data.coolclockShowDigitalAmPm),
+				logClock:        bool(data.coolclockLogClock),
+				logClockRev:     bool(data.coolclockLogClockRev)
 			});
 		}
+	}
+
+	function getClockOpt(str) {
+		var opt;
+		var isOpt = new RegExp(/^coolclock(.*)/);
+		var matches = str.match(isOpt)[1];
+		if (matches !== null) {
+			opt = matches.charAt(0).toLowerCase() + matches.slice(1);
+		}
+		else opt = false;
+		return opt;
+	}
+
+	function bool(arg) {
+		var isTrue = new RegExp(/^(true|1)$/i);
+		return isTrue.test(arg);
 	}
 };
 
