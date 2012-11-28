@@ -243,7 +243,8 @@ CoolClock.prototype = {
 		else {
 			this.ctx.beginPath();
 
-			// 
+			// If one of the below is set to something other than 0, we draw a
+			// quadrilateral. This allows triangle clock hands.
 			if (skin.startWidth || skin.endWidth) {
 				// Half the width to get positive and negative y value. Default
 				// to 0.
