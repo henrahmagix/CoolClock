@@ -21,10 +21,11 @@ CoolClock.config = {
 	renderRadius: 100,
 	defaultSkin: "chunkySwiss",
 	defaultFont: "15px sans-serif",
+	defaultStyle: {lineWidth: 1, startAt: 50, fillColor: "black", alpha: 1},
 	// Should be in skin probably...
 	// (TODO: allow skinning of digital display)
-	showSecs: true,
-	showAmPm: true,
+	showDigitalSecs: true,
+	showDigitalAmPm: true,
 
 	skins:	{
 		// There are more skins in moreskins.js
@@ -78,21 +79,22 @@ CoolClock.prototype = {
 	// Initialise using the parameters parsed from the colon delimited class
 	init: function(options) {
 		// Parse and store the options
-		this.canvasId       = options.canvasId;
-		this.skinId         = options.skinId || CoolClock.config.defaultSkin;
-		this.font           = options.font || CoolClock.config.defaultFont;
-		this.displayRadius  = options.displayRadius || CoolClock.config.defaultRadius;
-		this.renderRadius   = options.renderRadius || CoolClock.config.renderRadius;
-		this.showSecondHand = typeof options.showSecondHand == "boolean" ? options.showSecondHand : true;
-		this.gmtOffset      = (options.gmtOffset != null && options.gmtOffset != '') ? parseFloat(options.gmtOffset) : null;
-		this.showNumbers    = typeof options.showNumbers == "boolean" ? options.showNumbers : false;
-		this.showDigital    = typeof options.showDigital == "boolean" ? options.showDigital : false;
-		this.showSecs       = typeof options.showSecs == "boolean" ? options.showSecs : true;
-		this.showAmPm       = typeof options.showAmPm == "boolean" ? options.showAmPm : true;
-		this.logClock       = typeof options.logClock == "boolean" ? options.logClock : false;
-		this.logClockRev    = typeof options.logClock == "boolean" ? options.logClockRev : false;
+		this.canvasId        = options.canvasId;
+		this.skinId          = options.skinId || CoolClock.config.defaultSkin;
+		this.font            = options.font || CoolClock.config.defaultFont;
+		this.defaultStyle    = options.defaultStyle || CoolClock.config.defaultStyle;
+		this.displayRadius   = options.displayRadius || CoolClock.config.defaultRadius;
+		this.renderRadius    = options.renderRadius || CoolClock.config.renderRadius;
+		this.showSecondHand  = typeof options.showSecondHand == "boolean" ? options.showSecondHand : true;
+		this.gmtOffset       = (options.gmtOffset != null && options.gmtOffset != '') ? parseFloat(options.gmtOffset) : null;
+		this.showNumbers     = typeof options.showNumbers == "boolean" ? options.showNumbers : false;
+		this.showDigital     = typeof options.showDigital == "boolean" ? options.showDigital : false;
+		this.showDigitalSecs = typeof options.showDigitalSecs == "boolean" ? options.showDigitalSecs : true;
+		this.showDigitalAmPm = typeof options.showDigitalAmPm == "boolean" ? options.showDigitalAmPm : true;
+		this.logClock        = typeof options.logClock == "boolean" ? options.logClock : false;
+		this.logClockRev     = typeof options.logClock == "boolean" ? options.logClockRev : false;
 
-		this.tickDelay      = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
+		this.tickDelay       = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
 
 		// Get the canvas element
 		this.canvas = document.getElementById(this.canvasId);
@@ -213,10 +215,10 @@ CoolClock.prototype = {
 
 	timeText: function(hour,min,sec) {
 		var time = '' +
-			(this.showAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
+			(this.showDigitalAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
 			this.lpad2(min) +
-			(this.showSecs ? ':' + this.lpad2(sec) : '') +
-			(this.showAmPm ? (hour < 12 ? ' am' : ' pm') : '')
+			(this.showDigitalSecs ? ':' + this.lpad2(sec) : '') +
+			(this.showDigitalAmPm ? (hour < 12 ? ' am' : ' pm') : '')
 		;
 		return time;
 	},
@@ -320,19 +322,21 @@ CoolClock.prototype = {
 		}
 
 		// Draw 1-12 on the clock face.
-		if (this.showNumbers && skin.numbers) {
+		if (this.showNumbers) {
+			var numSkin = skin.numbers || this.defaultStyle;
             for (var i = 1; i <= 12; i++) {
                 angle = this.tickAngle(i * 5);
-                this.textAtAngle(i, angle, skin.numbers);
+                this.textAtAngle(i, angle, numSkin);
             };
 		}
 
 		// Write the time
-		if (this.showDigital && skin.digital) {
+		if (this.showDigital) {
+			var digiSkin = skin.digital || this.defaultStyle;
 			var digiText = this.timeText(hour,min,sec),
-				digiX = skin.digital.posX || this.renderRadius,
-				digiY = skin.digital.posY || this.renderRadius * 1.5;
-			this.drawTextAt(digiText, digiX, digiY, skin.digital);
+				digiX = digiSkin.posX || this.renderRadius,
+				digiY = digiSkin.posY || this.renderRadius * 1.5;
+			this.drawTextAt(digiText, digiX, digiY, digiSkin);
 		}
 		
 		var hourA = (hour%12)*5 + min/12.0,
@@ -449,6 +453,7 @@ CoolClock.findAndCreateClocks = function() {
 			}
 			settings.canvasId         = canvases[i].id;
 			settings.showSecondHand   = ! bool(settings.noSeconds);
+			settings.showNumbers      = bool(settings.showNumbers);
 			settings.showDigital      = bool(settings.showDigital);
 			settings.showDigitalSecs  = bool(settings.showDigitalSecs);
 			settings.showDigitalAmPm  = bool(settings.showDigitalAmPm);
