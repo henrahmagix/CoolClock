@@ -250,8 +250,8 @@ CoolClock.prototype = {
 			if (skin.startWidth || skin.endWidth) {
 				// Half the width to get positive and negative y value. Default
 				// to 0.
-				var startY = (skin.startWidth === undefined) ? 0 : skin.startWidth / 2;
-				var endY = (skin.endWidth === undefined) ? 0 : skin.endWidth / 2;
+				var startY = (skin.startWidth === undefined) ? skin.lineWidth : skin.startWidth / 2;
+				var endY = (skin.endWidth === undefined) ? skin.lineWidth : skin.endWidth / 2;
 				// Draw a shape.
 				this.ctx.moveTo(skin.startAt, startY);
 				this.ctx.lineTo(skin.endAt, endY);
