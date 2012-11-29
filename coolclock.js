@@ -321,48 +321,57 @@ CoolClock.findAndCreateClocks = function() {
 	// Let's not use a jQuery selector here so it's easier to use frameworks
 	// other than jQuery.
 	var canvases = document.getElementsByTagName("canvas");
-	console.log(canvases[2])
-	console.log(canvases[2].dataset)
 	for (var i=0;i<canvases.length;i++) {
 		// Pull out the fields from data attributes that begin data-coolclock.
 		// Example data-coolclock="true" data-coolclock-skin="chunkySwissOnBlack"
 		var data = canvases[i].dataset;
-		var settings = {};
-		for (var key in data) {
-			console.log(key, getClockOpt(key));
-			settings[getClockOpt(key)] = data[key];
-		}
-		console.log(settings)
 		if (data.hasOwnProperty('coolclock')) {
+			// We know that this canvas must be a clock so remove from dataset.
+			delete data.coolclock;
+
+			// Loop through dataset and extract settings.
+			var settings = {};
+			var clockOpt;
+			for (var key in data) {
+				var clockOpt = getClockOpt(key);
+				if (clockOpt !== '') {
+					settings[clockOpt] = data[key];
+				}
+			}
+
+			// Determine particular values for some settings.
 			if (!canvases[i].id) {
 				// If there's no id on this canvas element then give it one
 				canvases[i].id = '_coolclock_auto_id_' + CoolClock.config.noIdCount++;
 			}
+			settings.canvasId         = canvases[i].id;
+			settings.showSecondHand   = ! bool(settings.noSeconds);
+			settings.showDigital      = bool(settings.showDigital);
+			settings.showDigitalSecs  = bool(settings.showDigitalSecs);
+			settings.showDigitalAmPm  = bool(settings.showDigitalAmPm);
+			settings.logClock         = bool(settings.logClock);
+			settings.logClockRev      = bool(settings.logClockRev);
+			
 			// Create a clock object for this element
-			new CoolClock({
-				canvasId:        canvases[i].id,
-				skinId:          data.coolclockSkin,
-				displayRadius:   data.coolclockDisplayRadius,
-				renderRadius:    data.coolclockRenderRadius,
-				showSecondHand:  ! bool(data.coolclockNoSeconds),
-				gmtOffset:       data.coolclockGmtOffset,
-				showDigital:     bool(data.coolclockShowDigital),
-				showDigitalSecs: bool(data.coolclockShowDigitalSecs),
-				showDigitalAmPm: bool(data.coolclockShowDigitalAmPm),
-				logClock:        bool(data.coolclockLogClock),
-				logClockRev:     bool(data.coolclockLogClockRev)
-			});
+			new CoolClock(settings);
 		}
 	}
 
 	function getClockOpt(str) {
-		var opt;
-		var isOpt = new RegExp(/^coolclock(.*)/);
-		var matches = str.match(isOpt)[1];
+		var opt = '';
+		// Match anything (not nothing) following coolclock.
+		var isClockOpt = new RegExp(/^coolclock(.*)$/);
+		var matches = str.match(isClockOpt);
+
+		// If matches found, return coolclock or camelCase corrected option.
 		if (matches !== null) {
-			opt = matches.charAt(0).toLowerCase() + matches.slice(1);
+			opt = matches[0];
+			if (matches[1].length > 0) {
+				// Lowercase the first letter.
+				opt = matches[1].charAt(0).toLowerCase() + matches[1].slice(1);
+				if (opt === 'skin') opt = 'skinId';
+			}
 		}
-		else opt = false;
 		return opt;
 	}
 
