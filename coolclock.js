@@ -20,40 +20,45 @@ CoolClock.config = {
 	defaultRadius: 85,
 	renderRadius: 100,
 	defaultSkin: "chunkySwiss",
+	defaultFont: "15px sans-serif",
+	defaultStyle: {lineWidth: 1, startAt: 50, fillColor: "black", alpha: 1},
 	// Should be in skin probably...
 	// (TODO: allow skinning of digital display)
-	showSecs: true,
-	showAmPm: true,
+	showDigitalSecs: true,
+	showDigitalAmPm: true,
 
 	skins:	{
 		// There are more skins in moreskins.js
 		// Try making your own skin by copy/pasting one of these and tweaking it
 		swissRail: {
-			outerBorder: { lineWidth: 2, radius:95, color: "black", alpha: 1 },
-			smallIndicator: { lineWidth: 2, startAt: 88, endAt: 92, color: "black", alpha: 1 },
-			largeIndicator: { lineWidth: 4, startAt: 79, endAt: 92, color: "black", alpha: 1 },
-			hourHand: { lineWidth: 8, startAt: -15, endAt: 50, color: "black", alpha: 1 },
-			minuteHand: { lineWidth: 7, startAt: -15, endAt: 75, color: "black", alpha: 1 },
-			secondHand: { lineWidth: 1, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", color: "red", alpha: 1 }
+			outerBorder: { lineWidth: 2, radius:95, strokeColor: "black", alpha: 1 },
+			smallIndicator: { lineWidth: 2, startAt: 88, endAt: 92, strokeColor: "black", alpha: 1 },
+			largeIndicator: { lineWidth: 4, startAt: 79, endAt: 92, strokeColor: "black", alpha: 1 },
+			hourHand: { lineWidth: 8, startAt: -15, endAt: 50, strokeColor: "black", alpha: 1 },
+			minuteHand: { lineWidth: 7, startAt: -15, endAt: 75, strokeColor: "black", alpha: 1 },
+			secondHand: { lineWidth: 1, startAt: -20, endAt: 85, strokeColor: "red", alpha: 1 },
+			secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", strokeColor: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", strokeColor: "black", alpha: 1 }
 		},
 		chunkySwiss: {
-			outerBorder: { lineWidth: 4, radius:97, color: "black", alpha: 1 },
-			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, color: "black", alpha: 1 },
-			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, color: "black", alpha: 1 },
-			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, color: "black", alpha: 1 },
-			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, color: "black", alpha: 1 },
-			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 }
+			outerBorder: { lineWidth: 4, radius:97, strokeColor: "black", alpha: 1 },
+			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, strokeColor: "black", alpha: 1 },
+			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, strokeColor: "black", alpha: 1 },
+			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, strokeColor: "black", alpha: 1 },
+			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, strokeColor: "black", alpha: 1 },
+			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, strokeColor: "red", alpha: 1 },
+			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", strokeColor: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", strokeColor: "black", alpha: 1 }
 		},
 		chunkySwissOnBlack: {
-			outerBorder: { lineWidth: 4, radius:97, color: "white", alpha: 1 },
-			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, color: "white", alpha: 1 },
-			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, color: "white", alpha: 1 },
-			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, color: "white", alpha: 1 },
-			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, color: "white", alpha: 1 },
-			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, color: "red", alpha: 1 },
-			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", color: "red", alpha: 1 }
+			outerBorder: { lineWidth: 4, radius:97, strokeColor: "white", alpha: 1 },
+			smallIndicator: { lineWidth: 4, startAt: 89, endAt: 93, strokeColor: "white", alpha: 1 },
+			largeIndicator: { lineWidth: 8, startAt: 80, endAt: 93, strokeColor: "white", alpha: 1 },
+			hourHand: { lineWidth: 12, startAt: -15, endAt: 60, strokeColor: "white", alpha: 1 },
+			minuteHand: { lineWidth: 10, startAt: -15, endAt: 85, strokeColor: "white", alpha: 1 },
+			secondHand: { lineWidth: 4, startAt: -20, endAt: 85, strokeColor: "red", alpha: 1 },
+			secondDecoration: { lineWidth: 2, startAt: 70, radius: 8, fillColor: "red", strokeColor: "red", alpha: 1 },
+			digital: { lineWidth: 0, fillColor: "black", strokeColor: "black", alpha: 1 }
 		}
 
 	},
@@ -74,16 +79,22 @@ CoolClock.prototype = {
 	// Initialise using the parameters parsed from the colon delimited class
 	init: function(options) {
 		// Parse and store the options
-		this.canvasId       = options.canvasId;
-		this.skinId         = options.skinId || CoolClock.config.defaultSkin;
-		this.displayRadius  = options.displayRadius || CoolClock.config.defaultRadius;
-		this.showSecondHand = typeof options.showSecondHand == "boolean" ? options.showSecondHand : true;
-		this.gmtOffset      = (options.gmtOffset != null && options.gmtOffset != '') ? parseFloat(options.gmtOffset) : null;
-		this.showDigital    = typeof options.showDigital == "boolean" ? options.showDigital : false;
-		this.logClock       = typeof options.logClock == "boolean" ? options.logClock : false;
-		this.logClockRev    = typeof options.logClock == "boolean" ? options.logClockRev : false;
+		this.canvasId        = options.canvasId;
+		this.skinId          = options.skinId || CoolClock.config.defaultSkin;
+		this.font            = options.font || CoolClock.config.defaultFont;
+		this.defaultStyle    = options.defaultStyle || CoolClock.config.defaultStyle;
+		this.displayRadius   = options.displayRadius || CoolClock.config.defaultRadius;
+		this.renderRadius    = options.renderRadius || CoolClock.config.renderRadius;
+		this.showSecondHand  = typeof options.showSecondHand == "boolean" ? options.showSecondHand : true;
+		this.gmtOffset       = (options.gmtOffset != null && options.gmtOffset != '') ? parseFloat(options.gmtOffset) : null;
+		this.showNumbers     = typeof options.showNumbers == "boolean" ? options.showNumbers : false;
+		this.showDigital     = typeof options.showDigital == "boolean" ? options.showDigital : false;
+		this.showDigitalSecs = typeof options.showDigitalSecs == "boolean" ? options.showDigitalSecs : true;
+		this.showDigitalAmPm = typeof options.showDigitalAmPm == "boolean" ? options.showDigitalAmPm : true;
+		this.logClock        = typeof options.logClock == "boolean" ? options.logClock : false;
+		this.logClockRev     = typeof options.logClock == "boolean" ? options.logClockRev : false;
 
-		this.tickDelay      = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
+		this.tickDelay       = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
 
 		// Get the canvas element
 		this.canvas = document.getElementById(this.canvasId);
@@ -94,8 +105,13 @@ CoolClock.prototype = {
 		this.canvas.style.width = this.displayRadius*2 + "px";
 		this.canvas.style.height = this.displayRadius*2 + "px";
 
-		// Explain me please...?
-		this.renderRadius = CoolClock.config.renderRadius;
+		// Determine by what factor to relate skin values to canvas positions.
+		// renderRadius is the max skin positional value before leaving the
+		// canvas. displayRadius is half the width and height of the canvas in
+		// pixels. If they are equal, there is a 1:1 relation of skin position
+		// values to canvas pixels. Setting both to 200 allows 100px of space
+		// around clock skins to add your own things: this is due to current
+		// skins maxing out at a positional value of 100.
 		this.scale = this.displayRadius / this.renderRadius;
 
 		// Initialise canvas context
@@ -141,21 +157,39 @@ CoolClock.prototype = {
 			this.ctx.fillStyle = skin.fillColor
 			this.ctx.fill();
 		}
-		else {
-			// XXX why not stroke and fill
-			this.ctx.strokeStyle = skin.color;
+		if (skin.strokeColor || skin.color) {
+			this.ctx.strokeStyle = skin.strokeColor || skin.color;
 			this.ctx.stroke();
 		}
 		this.ctx.restore();
 	},
 
 	// Draw some text centered vertically and horizontally
-	drawTextAt: function(theText,x,y) {
+	drawTextAt: function(text, x, y, skin) {
+		if (!skin) skin = this.getSkin();
 		this.ctx.save();
-		this.ctx.font = '15px sans-serif';
-		var tSize = this.ctx.measureText(theText);
-		if (!tSize.height) tSize.height = 15; // no height in firefox.. :(
-		this.ctx.fillText(theText,x - tSize.width/2,y - tSize.height/2);
+		this.ctx.font = skin.font || this.font;
+
+		// Determine the draw position so text is centered at x,y.
+		var tSize = this.ctx.measureText(text);
+		x -= tSize.width / 2;
+		// TextMetrics rarely returns a height property: use baseline instead.
+		if (!tSize.height) {
+			tSize.height = 0;
+			this.ctx.textBaseline = 'middle';
+		}
+		y -= tSize.height / 2;
+
+		// Color the text. Both fill and stroke allowed; stroke above fill.
+		if (skin.fillColor) {
+			this.ctx.fillStyle = skin.fillColor;
+			this.ctx.fillText(text, x, y);
+		}
+		if (skin.strokeColor || skin.color) {
+			this.ctx.strokeStyle = skin.strokeColor || skin.color;
+			this.ctx.strokeText(text, x, y);
+		}
+
 		this.ctx.restore();
 	},
 
@@ -180,45 +214,99 @@ CoolClock.prototype = {
 	},
 
 	timeText: function(hour,min,sec) {
-		var c = CoolClock.config;
-		return '' +
-			(c.showAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
+		var time = '' +
+			(this.showDigitalAmPm ? ((hour%12)==0 ? 12 : (hour%12)) : hour) + ':' +
 			this.lpad2(min) +
-			(c.showSecs ? ':' + this.lpad2(sec) : '') +
-			(c.showAmPm ? (hour < 12 ? ' am' : ' pm') : '')
+			(this.showDigitalSecs ? ':' + this.lpad2(sec) : '') +
+			(this.showDigitalAmPm ? (hour < 12 ? ' am' : ' pm') : '')
 		;
+		return time;
 	},
 
 	// Draw a radial line by rotating then drawing a straight line
 	// Ha ha, I think I've accidentally used Taus, (see http://tauday.com/)
-	radialLineAtAngle: function(angleFraction,skin) {
+	radialLineAtAngle: function(angleFraction, skin) {
 		this.ctx.save();
-		this.ctx.translate(this.renderRadius,this.renderRadius);
-		this.ctx.rotate(Math.PI * (2.0 * angleFraction - 0.5));
 		this.ctx.globalAlpha = skin.alpha;
-		this.ctx.strokeStyle = skin.color;
 		this.ctx.lineWidth = skin.lineWidth;
 
-		if (CoolClock.config.isIE)
+		// Move the canvas to the center and rotate so +x is the radius.
+		this.ctx.translate(this.renderRadius,this.renderRadius);
+		this.ctx.rotate(Math.PI * (2.0 * angleFraction - 0.5));
+
+		if (CoolClock.config.isIE) {
 			// excanvas doesn't scale line width so we will do it here
 			this.ctx.lineWidth = this.ctx.lineWidth * this.scale;
+		}
 
 		if (skin.radius) {
-			this.fullCircleAt(skin.startAt,0,skin)
+			this.fullCircleAt(skin.startAt,0,skin);
 		}
 		else {
 			this.ctx.beginPath();
-			this.ctx.moveTo(skin.startAt,0)
-			this.ctx.lineTo(skin.endAt,0);
-			this.ctx.stroke();
+
+			// If one of the below is set to something other than 0, we draw a
+			// quadrilateral. This allows triangle clock hands.
+			if (skin.startWidth || skin.endWidth) {
+				// Half the width to get positive and negative y value. Default
+				// to 0.
+				var startY = (skin.startWidth === undefined) ? skin.lineWidth : skin.startWidth / 2;
+				var endY = (skin.endWidth === undefined) ? skin.lineWidth : skin.endWidth / 2;
+				// Draw a shape.
+				this.ctx.moveTo(skin.startAt, startY);
+				this.ctx.lineTo(skin.endAt, endY);
+				// Use negative start and end y values to mirror the above.
+				this.ctx.lineTo(skin.endAt, -endY);
+				this.ctx.lineTo(skin.startAt, -startY);
+				// Close to ensure consistent stroke path.
+				this.ctx.closePath();
+			}
+			else {
+				// Draw a line and stroke it.
+				this.ctx.moveTo(skin.startAt,0);
+				this.ctx.lineTo(skin.endAt,0);
+			}
+			
+			if (skin.fillColor) {
+				this.ctx.fillStyle = skin.fillColor;
+				this.ctx.fill();
+			}
+			if (skin.strokeColor || skin.color) {
+				this.ctx.strokeStyle = skin.strokeColor || skin.color;
+				this.ctx.stroke();
+			}
 		}
+		this.ctx.restore();
+	},
+
+	textAtAngle: function(text, angleFraction, skin) {
+		this.ctx.save();
+
+		this.ctx.globalAlpha = skin.alpha;
+		this.ctx.lineWidth = skin.lineWidth;
+
+		// Move the canvas to the center and rotate so +x is the radius.
+		this.ctx.translate(this.renderRadius,this.renderRadius);
+		var radial = Math.PI * (2.0 * angleFraction - 0.5);
+		this.ctx.rotate(radial);
+		// Now move along the radial and reset the rotation.
+		this.ctx.translate(skin.startAt, 0);
+		this.ctx.rotate(-radial);
+
+		if (CoolClock.config.isIE) {
+			// excanvas doesn't scale line width so we will do it here
+			this.ctx.lineWidth = this.ctx.lineWidth * this.scale;
+		}
+
+		// Draw the text.
+		this.drawTextAt(text, 0, 0, skin);
+
 		this.ctx.restore();
 	},
 
 	render: function(hour,min,sec) {
 		// Get the skin
-		var skin = CoolClock.config.skins[this.skinId];
-		if (!skin) skin = CoolClock.config.skins[CoolClock.config.defaultSkin];
+		var skin = this.getSkin();
 
 		// Clear
 		this.ctx.clearRect(0,0,this.renderRadius*2,this.renderRadius*2);
@@ -233,13 +321,22 @@ CoolClock.prototype = {
 			!(i%5) && skin.largeIndicator && this.radialLineAtAngle(this.tickAngle(i),skin.largeIndicator);
 		}
 
+		// Draw 1-12 on the clock face.
+		if (this.showNumbers) {
+			var numSkin = skin.numbers || this.defaultStyle;
+            for (var i = 1; i <= 12; i++) {
+                angle = this.tickAngle(i * 5);
+                this.textAtAngle(i, angle, numSkin);
+            };
+		}
+
 		// Write the time
 		if (this.showDigital) {
-			this.drawTextAt(
-				this.timeText(hour,min,sec),
-				this.renderRadius,
-				this.renderRadius+this.renderRadius/2
-			);
+			var digiSkin = skin.digital || this.defaultStyle;
+			var digiText = this.timeText(hour,min,sec),
+				digiX = digiSkin.posX || this.renderRadius,
+				digiY = digiSkin.posY || this.renderRadius * 1.5;
+			this.drawTextAt(digiText, digiX, digiY, digiSkin);
 		}
 		
 		var hourA = (hour%12)*5 + min/12.0,
@@ -266,6 +363,10 @@ CoolClock.prototype = {
 
 			if (this.showSecondHand && skin.secondDecoration)
 				this.radialLineAtAngle(this.tickAngle(secA),skin.secondDecoration);
+		}
+
+		if (this.extraRender) {
+			this.extraRender(hour,min,sec);
 		}
 	},
 
@@ -313,33 +414,78 @@ CoolClock.prototype = {
 			this.refreshDisplay()
 			this.nextTick();
 		}
+	},
+
+	getSkin: function() {
+		var skin = CoolClock.config.skins[this.skinId];
+		if (!skin) skin = CoolClock.config.skins[CoolClock.config.defaultSkin];
+		return skin;
 	}
 };
 
 // Find all canvas elements that have the CoolClock class and turns them into clocks
 CoolClock.findAndCreateClocks = function() {
-	// (Let's not use a jQuery selector here so it's easier to use frameworks other than jQuery)
+	// Let's not use a jQuery selector here so it's easier to use frameworks
+	// other than jQuery.
 	var canvases = document.getElementsByTagName("canvas");
 	for (var i=0;i<canvases.length;i++) {
-		// Pull out the fields from the class. Example "CoolClock:chunkySwissOnBlack:1000"
-		var fields = canvases[i].className.split(" ")[0].split(":");
-		if (fields[0] == "CoolClock") {
+		// Pull out the fields from data attributes that begin data-coolclock.
+		// Example data-coolclock="true" data-coolclock-skin="chunkySwissOnBlack"
+		var data = canvases[i].dataset;
+		if (data.hasOwnProperty('coolclock')) {
+			// We know that this canvas must be a clock so remove from dataset.
+			delete data.coolclock;
+
+			// Loop through dataset and extract settings.
+			var settings = {};
+			var clockOpt;
+			for (var key in data) {
+				var clockOpt = getClockOpt(key);
+				if (clockOpt !== '') {
+					settings[clockOpt] = data[key];
+				}
+			}
+
+			// Determine particular values for some settings.
 			if (!canvases[i].id) {
 				// If there's no id on this canvas element then give it one
 				canvases[i].id = '_coolclock_auto_id_' + CoolClock.config.noIdCount++;
 			}
+			settings.canvasId         = canvases[i].id;
+			settings.showSecondHand   = ! bool(settings.noSeconds);
+			settings.showNumbers      = bool(settings.showNumbers);
+			settings.showDigital      = bool(settings.showDigital);
+			settings.showDigitalSecs  = bool(settings.showDigitalSecs);
+			settings.showDigitalAmPm  = bool(settings.showDigitalAmPm);
+			settings.logClock         = bool(settings.logClock);
+			settings.logClockRev      = bool(settings.logClockRev);
+			
 			// Create a clock object for this element
-			new CoolClock({
-				canvasId:       canvases[i].id,
-				skinId:         fields[1],
-				displayRadius:  fields[2],
-				showSecondHand: fields[3]!='noSeconds',
-				gmtOffset:      fields[4],
-				showDigital:    fields[5]=='showDigital',
-				logClock:       fields[6]=='logClock',
-				logClockRev:    fields[6]=='logClockRev'
-			});
+			new CoolClock(settings);
 		}
+	}
+
+	function getClockOpt(str) {
+		var opt = '';
+		// Match anything (not nothing) following coolclock.
+		var isClockOpt = new RegExp(/^coolclock(.*)$/);
+		var matches = str.match(isClockOpt);
+
+		// If matches found, return coolclock or camelCase corrected option.
+		if (matches !== null) {
+			opt = matches[0];
+			if (matches[1].length > 0) {
+				// Lowercase the first letter.
+				opt = matches[1].charAt(0).toLowerCase() + matches[1].slice(1);
+				if (opt === 'skin') opt = 'skinId';
+			}
+		}
+		return opt;
+	}
+
+	function bool(arg) {
+		var isTrue = new RegExp(/^(true|1)$/i);
+		return isTrue.test(arg);
 	}
 };
 
