@@ -494,7 +494,7 @@ CoolClock.findAndCreateClocks = function() {
 				if (optDataset.hasOwnProperty(opt)) {
 					opt = optDataset[opt];
 				}
-				if (opt === 'skin') opt = 'skinId';
+				else if (opt === 'skin') opt = 'skinId';
 			}
 		}
 		return opt;
