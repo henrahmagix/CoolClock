@@ -1,4 +1,3 @@
-
 // Constructor for CoolClock objects
 window.CoolClock = function(options) {
 	return this.init(options);

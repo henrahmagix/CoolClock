@@ -57,33 +57,104 @@ like this:
 Somewhere in the body of your html file add the following:
 
 ````Html
-<canvas id="clockid" class="CoolClock:Skin:Radius:noSeconds:GMTOffset"></canvas>
+<canvas id="clockid" data-coolclock="true"></canvas>
 ````
 
-The colon delimited fields after CoolClock in the class control the appearance of the clock. The fields are as follows:
+The `data-coolclock` attribute tells CoolClock to add a clock to this canvas.
+To control the appearance of the clock, add `data-coolclock-option` attributes,
+where **option** is one of the following fields and its value is the attributes'
+value. The fields are as follows:
+
+- coolclock
+ - Required
+ - Without this your canvas will be left alone
+
+- skin
+ - Optional. Default is "chunkySwiss"
+ - Specifies which skin to use. CoolClock currently includes seven skins:
+"swissRail", "chunkySwiss", "fancy", "machine", "classic", "modern" and
+"simple". (The last three were created by Bonstio for use with his Google
+Gadget). It's easy to create your own additional skins.
+
+- font
+ - Optional. Default is "15px sans-serif"
+ - Specifies the font size, weight, and family to be used for any text drawn on
+the clock. Each subskin can have a font property to override this one.
+
+- defaultStyle
+ - Optional. Default is `{lineWidth: 1, startAt: 50, fillColor: "black", alpha: 1}`
+ - This is the default subskin style, in case a subskin hasn't been set for a
+feature, for example: showNumbers.
+
+- displayRadius
+ - Optional. Default is 85
+ - Specifies the radius in pixels of the clock.
+
+- renderRadius
+ - Optional. Default is 100
+ - Determines the scale to be applied to the skin values. If the ratio of
+displayRadius to renderRadius is 1:1, then skin values like startAt and
+lineWidth relate directly to pixels on the screen. This means a displayRadius
+and renderRadius of 200 will give you a 400x400 pixel canvas with a clock in
+the center, most likely at 200x200 pixels in size, since all skins should be
+based on values of 0 to 100. This then allowes you space around the clock to
+add your own decorations to the provided skins.
+
+- showSecondHand
+ - 
+ - 
+
+- gmtOffset
+ - 
+ - 
+
+- showNumbers
+ - 
+ - 
+
+- showDigital
+ - 
+ - 
+
+- showDigitalSecs
+ - 
+ - 
+
+- showDigitalAmPm
+ - 
+ - 
+
+- logClock
+ - 
+ - 
+
+- logClockRev
+ - 
+ - 
+
 
 <table>
-<tr><td>`CoolClock`</td><td>Required</td>
+<tr><td>coolclock</td><td>Required</td>
 
-<td>Without that your canvas will be left alone</td></tr>
+<td>Without that your canvas will be left alone.</td></tr>
 
-<tr><td>`Skin`</td><td>Optional. Default is "swissRail"</td>
+<tr><td>skin</td><td>Optional. Default is "swissRail"</td>
 
 <td>Specifies which skin to use. CoolClock currently includes seven skins,
 "swissRail", "chunkySwiss", "fancy", "machine", "classic", "modern" and
 "simple". (The last three were created by Bonstio for use with his Google
-Gadget). It's easy to create your own additional skins</td></tr>
+Gadget). It's easy to create your own additional skins.</td></tr>
 
-<tr><td>`Radius`</td><td>Optional. Default is 85</td>
+<tr><td>displayRadius</td><td>Optional. Default is 85</td>
 
-<td>Specifies the radius in pixels of the clock</td></tr>
+<td>Specifies the radius in pixels of the clock.</td></tr>
 
-<tr><td>`noSeconds`</td><td>Optional</td>
+<tr><td>noSeconds</td><td>Optional</td>
 
 <td>If you include "noSeconds" as the last field then the clock will have no
 second hand. Use if your CPU usage is too high</td></tr>
 
-<tr><td>`GMTOffset`</td><td>Optional</td>
+<tr><td>GMTOffset</td><td>Optional</td>
 
 <td>If you don't specify anything you get local time. If you specify a value
 here (in hours) it will be used as an offset from GMT (UTC). Eg, put -5 to
@@ -91,23 +162,6 @@ indicate 5 hours behind GMT. You can specify fractions of hours, eg
 +2.5</td></tr>
 
 </table>
-
-You should be able to omit fields to indicate you want the default values, eg
-`CoolClock:::noSeconds` means default skin and default size with no second
-hand.
-
-If you want to add a real css class to your clock canvases you can do so by
-adding a space then the class. For example:
-
-````Html
-<canvas id="clk1" class="CoolClock:fancy myClock"></canvas>
-````
-
-And of course you can add styles directly if you need to, eg:
-
-````Html
-<canvas id="clk2" style="display:block;" class="CoolClock:fancy"></canvas>
-`````
 
 The id can be anything but it should be unique of course.
 
@@ -127,7 +181,7 @@ swissRail: {
   minuteHand: { lineWidth: 7, startAt: -15, endAt: 75, color: "black", alpha: 1 },
   secondHand: { lineWidth: 1, startAt: -20, endAt: 85, color: "red", alpha: 1 },
   secondDecoration: { lineWidth: 1, startAt: 70, radius: 4, fillColor: "red", color: "red", alpha: 1 }
-},
+}
 ````
 
 Name your skin, eg change "swissRail" to "mySkin". Your skin is now available
