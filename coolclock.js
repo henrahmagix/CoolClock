@@ -1,4 +1,3 @@
-
 // Constructor for CoolClock objects
 window.CoolClock = function(options) {
 	return this.init(options);
@@ -85,7 +84,7 @@ CoolClock.prototype = {
 		this.logClock        = typeof options.logClock == "boolean" ? options.logClock : false;
 		this.logClockRev     = typeof options.logClock == "boolean" ? options.logClockRev : false;
 
-		this.tickDelay       = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
+		this.tickDelay       = CoolClock.config[ (this.showSecondHand || this.showDigitalSecs) ? "tickDelay" : "longTickDelay" ];
 
 		// Get the canvas element
 		this.canvas = document.getElementById(this.canvasId);
@@ -236,13 +235,13 @@ CoolClock.prototype = {
 		else {
 			this.ctx.beginPath();
 
-			// If one of the below is set to something other than 0, we draw a
-			// quadrilateral. This allows triangle clock hands.
-			if (skin.startWidth || skin.endWidth) {
+			// If one of the below is set, we draw a quadrilateral. This allows
+			// triangle clock hands.
+			if (skin.startWidth !== undefined || skin.endWidth !== undefined) {
 				// Half the width to get positive and negative y value. Default
-				// to 0.
-				var startY = (skin.startWidth === undefined) ? skin.lineWidth : skin.startWidth / 2;
-				var endY = (skin.endWidth === undefined) ? skin.lineWidth : skin.endWidth / 2;
+				// to lineWidth for start or end width that isn't set.
+				var startY = (skin.startWidth === undefined) ? skin.lineWidth / 2 : skin.startWidth / 2;
+				var endY = (skin.endWidth === undefined) ? skin.lineWidth / 2 : skin.endWidth / 2;
 				// Draw a shape.
 				this.ctx.moveTo(skin.startAt, startY);
 				this.ctx.lineTo(skin.endAt, endY);
@@ -253,7 +252,7 @@ CoolClock.prototype = {
 				this.ctx.closePath();
 			}
 			else {
-				// Draw a line and stroke it.
+				// Draw a line.
 				this.ctx.moveTo(skin.startAt,0);
 				this.ctx.lineTo(skin.endAt,0);
 			}
@@ -324,9 +323,9 @@ CoolClock.prototype = {
 		// Write the time
 		if (this.showDigital) {
 			var digiSkin = skin.digital || this.defaultStyle;
-			var digiText = this.timeText(hour,min,sec),
-				digiX = digiSkin.posX || this.renderRadius,
-				digiY = digiSkin.posY || this.renderRadius * 1.5;
+			var digiText = this.timeText(hour,min,sec);
+			var digiX = digiSkin.posX || this.renderRadius;
+			var digiY = digiSkin.posY || this.renderRadius * 1.5;
 			this.drawTextAt(digiText, digiX, digiY, digiSkin);
 		}
 
@@ -431,7 +430,7 @@ CoolClock.findAndCreateClocks = function() {
 			var settings = {};
 			var clockOpt;
 			for (var key in data) {
-				var clockOpt = getClockOpt(key);
+				clockOpt = getClockOpt(key);
 				if (clockOpt !== '') {
 					settings[clockOpt] = data[key];
 				}
@@ -458,17 +457,43 @@ CoolClock.findAndCreateClocks = function() {
 
 	function getClockOpt(str) {
 		var opt = '';
+
+		// Create a way to match a DOM dataset property to a CoolClock config.
+		var optNames = [
+			'canvasId',
+			'skinId',
+			'font',
+			'defaultStyle',
+			'displayRadius',
+			'renderRadius',
+			'showSecondHand',
+			'gmtOffset',
+			'showNumbers',
+			'showDigital',
+			'showDigitalSecs',
+			'showDigitalAmPm',
+			'logClock',
+			'logClockRev'
+		];
+		var optDataset = {};
+		for (var i = 0; i < optNames.length; i++) {
+			optDataset[optNames[i].toLowerCase()] = optNames[i];
+		};
+
 		// Match anything (not nothing) following coolclock.
-		var isClockOpt = new RegExp(/^coolclock(.*)$/);
+		var isClockOpt = new RegExp(/^coolclock(.+)$/);
 		var matches = str.match(isClockOpt);
 
 		// If matches found, return coolclock or camelCase corrected option.
 		if (matches !== null) {
 			opt = matches[0];
 			if (matches[1].length > 0) {
-				// Lowercase the first letter.
-				opt = matches[1].charAt(0).toLowerCase() + matches[1].slice(1);
-				if (opt === 'skin') opt = 'skinId';
+				// Lowercase the opt and get the config name from optDataset.
+				opt = matches[1].toLowerCase();
+				if (optDataset.hasOwnProperty(opt)) {
+					opt = optDataset[opt];
+				}
+				else if (opt === 'skin') opt = 'skinId';
 			}
 		}
 		return opt;
