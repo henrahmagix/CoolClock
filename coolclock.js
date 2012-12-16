@@ -236,13 +236,13 @@ CoolClock.prototype = {
 		else {
 			this.ctx.beginPath();
 
-			// If one of the below is set to something other than 0, we draw a
-			// quadrilateral. This allows triangle clock hands.
-			if (skin.startWidth || skin.endWidth) {
+			// If one of the below is set, we draw a quadrilateral. This allows
+			// triangle clock hands.
+			if (skin.startWidth !== undefined || skin.endWidth !== undefined) {
 				// Half the width to get positive and negative y value. Default
-				// to 0.
-				var startY = (skin.startWidth === undefined) ? skin.lineWidth : skin.startWidth / 2;
-				var endY = (skin.endWidth === undefined) ? skin.lineWidth : skin.endWidth / 2;
+				// to lineWidth for start or end width that isn't set.
+				var startY = (skin.startWidth === undefined) ? skin.lineWidth / 2 : skin.startWidth / 2;
+				var endY = (skin.endWidth === undefined) ? skin.lineWidth / 2 : skin.endWidth / 2;
 				// Draw a shape.
 				this.ctx.moveTo(skin.startAt, startY);
 				this.ctx.lineTo(skin.endAt, endY);
@@ -253,7 +253,7 @@ CoolClock.prototype = {
 				this.ctx.closePath();
 			}
 			else {
-				// Draw a line and stroke it.
+				// Draw a line.
 				this.ctx.moveTo(skin.startAt,0);
 				this.ctx.lineTo(skin.endAt,0);
 			}
