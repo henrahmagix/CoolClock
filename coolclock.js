@@ -85,7 +85,7 @@ CoolClock.prototype = {
 		this.logClock        = typeof options.logClock == "boolean" ? options.logClock : false;
 		this.logClockRev     = typeof options.logClock == "boolean" ? options.logClockRev : false;
 
-		this.tickDelay       = CoolClock.config[ this.showSecondHand ? "tickDelay" : "longTickDelay" ];
+		this.tickDelay       = CoolClock.config[ (this.showSecondHand || this.showDigitalSecs) ? "tickDelay" : "longTickDelay" ];
 
 		// Get the canvas element
 		this.canvas = document.getElementById(this.canvasId);
