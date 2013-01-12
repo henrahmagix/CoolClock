@@ -26,7 +26,9 @@
             displayRadius: 100,
             renderRadius: 100,
             showNumbers: true,
-            showSecondHand: true
+            showSecondHand: false,
+            showDigital: true,
+            showDigitalSecs: false
         };
         var clock = new SexyClock(clockSettings);
     });

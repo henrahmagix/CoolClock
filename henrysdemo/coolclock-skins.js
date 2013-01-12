@@ -38,9 +38,10 @@
             },
             minuteHand: {
                 lineWidth: 5,
+                startWidth: 0,
                 startAt: -20,
                 endAt: 80,
-                color: 'black',
+                fillColor: 'black',
                 alpha: 1
             },
             secondHand: {
@@ -57,6 +58,14 @@
                 fillColor: 'black',
                 color: 'black',
                 alpha: 1
+            },
+            digital: {
+                startAt: 50,
+                fillColor: 'black',
+                strokeColor: 'red',
+                lineWidth: 1,
+                alpha: 1,
+                font: '30px serif'
             },
             numbers: {
                 lineWidth: 0,
