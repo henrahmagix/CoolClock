@@ -455,9 +455,9 @@ CoolClock.findAndCreateClocks = function() {
 			};
 
 			// Let noSeconds override showSecondHand and showDigitalSecs.
-			if (settings.hasOwnProperty('noSeconds')) {
-				settings.showSecondHand = ! settings.noSeconds && settings.showSecondHand;
-				settings.showDigitalSecs = ! settings.noSeconds && settings.showDigitalSecs;
+			if (settings.hasOwnProperty('noSeconds') && settings.noSeconds) {
+				settings.showSecondHand = false;
+				settings.showDigitalSecs = false;
 			}
 
 			// Set the canvasId to allow tracking.
@@ -529,7 +529,7 @@ CoolClock.findAndCreateClocks = function() {
 				}
 			}
 		}
-		
+
 		return opt;
 	}
 
