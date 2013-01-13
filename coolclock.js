@@ -433,22 +433,31 @@ CoolClock.findAndCreateClocks = function() {
 				clockOpt = getClockOpt(key);
 				if (clockOpt !== '') {
 					settings[clockOpt] = data[key];
+					// Determine particular values for some settings.
+					if (clockOpt === 'showSecondHand') {
+						settings.showSecondHand  = ! bool(settings.noSeconds);
+					} else if (clockOpt === 'showNumbers') {
+						settings.showNumbers     = bool(settings.showNumbers);
+					} else if (clockOpt === 'showDigital') {
+						settings.showDigital     = bool(settings.showDigital);
+					} else if (clockOpt === 'showDigitalSecs') {
+						settings.showDigitalSecs = bool(settings.showDigitalSecs);
+					} else if (clockOpt === 'showDigitalAmPm') {
+						settings.showDigitalAmPm = bool(settings.showDigitalAmPm);
+					} else if (clockOpt === 'logClock') {
+						settings.logClock        = bool(settings.logClock);
+					} else if (clockOpt === 'logClockRev') {
+						settings.logClockRev     = bool(settings.logClockRev);
+					}
 				}
 			}
 
-			// Determine particular values for some settings.
+			// Set the canvasId to allow tracking.
 			if (!canvases[i].id) {
 				// If there's no id on this canvas element then give it one
 				canvases[i].id = '_coolclock_auto_id_' + CoolClock.config.noIdCount++;
 			}
-			settings.canvasId         = canvases[i].id;
-			settings.showSecondHand   = ! bool(settings.noSeconds);
-			settings.showNumbers      = bool(settings.showNumbers);
-			settings.showDigital      = bool(settings.showDigital);
-			settings.showDigitalSecs  = bool(settings.showDigitalSecs);
-			settings.showDigitalAmPm  = bool(settings.showDigitalAmPm);
-			settings.logClock         = bool(settings.logClock);
-			settings.logClockRev      = bool(settings.logClockRev);
+			settings.canvasId = canvases[i].id;
 			
 			// Create a clock object for this element
 			new CoolClock(settings);
