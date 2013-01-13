@@ -82,7 +82,7 @@ CoolClock.prototype = {
 		this.showDigitalSecs = typeof options.showDigitalSecs == "boolean" ? options.showDigitalSecs : true;
 		this.showDigitalAmPm = typeof options.showDigitalAmPm == "boolean" ? options.showDigitalAmPm : true;
 		this.logClock        = typeof options.logClock == "boolean" ? options.logClock : false;
-		this.logClockRev     = typeof options.logClock == "boolean" ? options.logClockRev : false;
+		this.logClockRev     = typeof options.logClockRev == "boolean" ? options.logClockRev : false;
 
 		this.tickDelay       = CoolClock.config[ (this.showSecondHand || this.showDigitalSecs) ? "tickDelay" : "longTickDelay" ];
 
