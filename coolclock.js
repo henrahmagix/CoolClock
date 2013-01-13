@@ -433,23 +433,31 @@ CoolClock.findAndCreateClocks = function() {
 				clockOpt = getClockOpt(key);
 				if (clockOpt !== '') {
 					settings[clockOpt] = data[key];
-					// Determine particular values for some settings.
-					if (clockOpt === 'showSecondHand') {
-						settings.showSecondHand  = ! bool(settings.noSeconds);
-					} else if (clockOpt === 'showNumbers') {
-						settings.showNumbers     = bool(settings.showNumbers);
-					} else if (clockOpt === 'showDigital') {
-						settings.showDigital     = bool(settings.showDigital);
-					} else if (clockOpt === 'showDigitalSecs') {
-						settings.showDigitalSecs = bool(settings.showDigitalSecs);
-					} else if (clockOpt === 'showDigitalAmPm') {
-						settings.showDigitalAmPm = bool(settings.showDigitalAmPm);
-					} else if (clockOpt === 'logClock') {
-						settings.logClock        = bool(settings.logClock);
-					} else if (clockOpt === 'logClockRev') {
-						settings.logClockRev     = bool(settings.logClockRev);
-					}
 				}
+			}
+
+			// Determine boolean values for some settings using bool().
+			var booleanSettings = [
+				'noSeconds',
+				'showSecondHand',
+				'showNumbers',
+				'showDigital',
+				'showDigitalSecs',
+				'showDigitalAmPm',
+				'logClock',
+				'logClockRev'
+			];
+			for (var j = 0; j < booleanSettings.length; j++) {
+				var setting = booleanSettings[j];
+				if (settings.hasOwnProperty(setting)) {
+					settings[setting] = bool(settings[setting]);
+				}
+			};
+
+			// Let noSeconds override showSecondHand and showDigitalSecs.
+			if (settings.hasOwnProperty('noSeconds')) {
+				settings.showSecondHand = ! settings.noSeconds && settings.showSecondHand;
+				settings.showDigitalSecs = ! settings.noSeconds && settings.showDigitalSecs;
 			}
 
 			// Set the canvasId to allow tracking.
@@ -481,6 +489,7 @@ CoolClock.findAndCreateClocks = function() {
 			'defaultStyle',
 			'displayRadius',
 			'renderRadius',
+			'noSeconds',
 			'showSecondHand',
 			'gmtOffset',
 			'showNumbers',
@@ -503,7 +512,6 @@ CoolClock.findAndCreateClocks = function() {
 		// Match anything (not nothing) following coolclock.
 		var isClockOpt = new RegExp(/^coolclock(.+)$/);
 		var matches = str.match(isClockOpt);
-
 		// If matches found, return coolclock or camelCase corrected option.
 		if (matches !== null) {
 			// Get the whole string that matched true.
@@ -521,6 +529,7 @@ CoolClock.findAndCreateClocks = function() {
 				}
 			}
 		}
+		
 		return opt;
 	}
 
