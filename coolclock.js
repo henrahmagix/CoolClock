@@ -468,6 +468,12 @@ CoolClock.findAndCreateClocks = function() {
 		var opt = '';
 
 		// Create a way to match a DOM dataset property to a CoolClock config.
+		// DOM datasets are the attribute name with 'data' and hyphens removed
+		// then camelCased. This means 'data-coolclock-no-seconds' becomes
+		// 'coolclockNoSeconds'. In order to match for all possible results of
+		// dataset names, we need a map of config names from
+		// CoolClock.prototype.init() in lowercase to their camelCased version.
+		// This is the list of config names used in the init.
 		var optNames = [
 			'canvasId',
 			'skinId',
@@ -484,6 +490,11 @@ CoolClock.findAndCreateClocks = function() {
 			'logClock',
 			'logClockRev'
 		];
+		// A loop gives us a map like so:
+		// {
+		//     skinid: 'skinId',
+		//     showdigitalampm: 'showDigitalAmPm'
+		// }
 		var optDataset = {};
 		for (var i = 0; i < optNames.length; i++) {
 			optDataset[optNames[i].toLowerCase()] = optNames[i];
@@ -495,9 +506,13 @@ CoolClock.findAndCreateClocks = function() {
 
 		// If matches found, return coolclock or camelCase corrected option.
 		if (matches !== null) {
+			// Get the whole string that matched true.
 			opt = matches[0];
+			// If there is a submatch, use that instead. matches[1] is at least
+			// an empty string, so check its length.
 			if (matches[1].length > 0) {
 				// Lowercase the opt and get the config name from optDataset.
+				// Legacy config names can go in else ifs.
 				opt = matches[1].toLowerCase();
 				if (optDataset.hasOwnProperty(opt)) {
 					opt = optDataset[opt];
