@@ -15,10 +15,11 @@
 	</head>
 	<body>
 		<h1>Demo</h1>
-		<canvas class="CoolClock"></canvas>
-		<canvas class="CoolClock:swissRail:120"></canvas>
-		<canvas class="CoolClock::40:noSeconds:+2.5"></canvas>
-		<canvas class="CoolClock:::::showDigital:logClock"></canvas>
-		<canvas class="CoolClock:::::showDigital:logClockRev"></canvas>
+		<canvas data-coolclock="CoolClock"></canvas>
+		<canvas data-coolclock="true" data-coolclock-skin="swissRail" data-coolclock-displayradius="120"></canvas>
+		<canvas data-coolclock="1" data-coolclock-displayradius="40" data-coolclock-noseconds="true" data-coolclock-gmtoffset="+2.5"></canvas>
+		<canvas data-coolclock="" data-coolclock-showdigital="true" data-coolclock-noseconds="true" data-coolclock-showdigitalsecs="true"></canvas>
+		<canvas data-coolclock="" data-coolclock-showdigital="true" data-coolclock-logclock="true"></canvas>
+		<canvas data-coolclock="false" data-coolclock-showdigital="true" data-coolclock-logclockrev="true"></canvas>
 	</body>
 </html>
