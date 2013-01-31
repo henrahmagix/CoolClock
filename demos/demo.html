@@ -7,13 +7,104 @@
 		<!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
 		<script src="../coolclock.js" type="text/javascript"></script>
 		<script src="../moreskins.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			// Copied from CoolClock.findAndCreateClocks().
+			function getClockOpt(str) {
+				var opt = '';
+
+				// Create a way to match a DOM dataset property to a CoolClock config.
+				// DOM datasets are the attribute name with 'data' and hyphens removed
+				// then camelCased. This means 'data-coolclock-no-seconds' becomes
+				// 'coolclockNoSeconds'. In order to match for all possible results of
+				// dataset names, we need a map of config names from
+				// CoolClock.prototype.init() in lowercase to their camelCased version.
+				// This is the list of config names used in the init.
+				var optNames = [
+					'canvasId',
+					'skinId',
+					'font',
+					'defaultStyle',
+					'displayRadius',
+					'renderRadius',
+					'noSeconds',
+					'showSecondHand',
+					'gmtOffset',
+					'showNumbers',
+					'showDigital',
+					'showDigitalSecs',
+					'showDigitalAmPm',
+					'logClock',
+					'logClockRev'
+				];
+				// A loop gives us a map like so:
+				// {
+				//     skinid: 'skinId',
+				//     showdigitalampm: 'showDigitalAmPm'
+				// }
+				var optDataset = {};
+				for (var i = 0; i < optNames.length; i++) {
+					optDataset[optNames[i].toLowerCase()] = optNames[i];
+				};
+
+				// Match anything (not nothing) following coolclock.
+				var isClockOpt = new RegExp(/^coolclock(.+)$/);
+				var matches = str.match(isClockOpt);
+				// If matches found, return coolclock or camelCase corrected option.
+				if (matches !== null) {
+					// Get the whole string that matched true.
+					opt = matches[0];
+					// If there is a submatch, use that instead. matches[1] is at least
+					// an empty string, so check its length.
+					if (matches[1].length > 0) {
+						// Lowercase the opt and get the config name from optDataset.
+						// Legacy config names can go in else ifs.
+						opt = matches[1].toLowerCase();
+						if (optDataset.hasOwnProperty(opt)) {
+							opt = optDataset[opt];
+						} else if (opt === 'skin') {
+							opt = 'skinId';
+						}
+					}
+				}
+
+				return opt;
+			}
+			window.CoolClockDisplay = function() {
+				// Display all options below each clock.
+				var canvas;
+				// var canvases = document.getElementsByTagName("canvas");
+				var canvases = document.createElement('div');
+				var wrapper = document.createElement('div');
+				var infoDiv = document.createElement('div');
+				wrapper.setAttribute('class', 'canvas-wrapper');
+				infoDiv.setAttribute('class', 'info');
+				var cloneWrapper;
+				var cloneInfo;
+				var setting;
+				while (canvas = document.getElementsByTagName('canvas').item(0)) {
+					canvas.remove();
+					cloneWrapper = wrapper.cloneNode();
+					cloneInfo = infoDiv.cloneNode();
+					for (setting in canvas.dataset) {
+						cloneInfo.innerText += getClockOpt(setting) + '=' + canvas.dataset[setting];
+						cloneInfo.appendChild(document.createElement('br'));
+					}
+					cloneWrapper.appendChild(cloneInfo);
+					cloneWrapper.appendChild(canvas);
+					canvases.appendChild(cloneWrapper);
+				}
+				document.body.appendChild(canvases);
+			}
+		</script>
 
 		<style type="text/css">
 			body { font-family:sans-serif; }
 			div { padding-bottom:1em; }
+			.canvas-wrapper { float:left; margin-right:1em;}
+			.info { text-align:center; }
 		</style>
 	</head>
-	<body>
+	<body onload="CoolClockDisplay()">
 		<h1>Demo</h1>
 		<canvas data-coolclock="CoolClock"></canvas>
 		<canvas data-coolclock="true" data-coolclock-skin="swissRail" data-coolclock-displayradius="120"></canvas>
