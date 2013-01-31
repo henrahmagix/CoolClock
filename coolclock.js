@@ -316,7 +316,8 @@ CoolClock.prototype = {
 			var numSkin = skin.numbers || this.defaultStyle;
             for (var i = 1; i <= 12; i++) {
                 angle = this.tickAngle(i * 5);
-                this.textAtAngle(i, angle, numSkin);
+                // Ensure a string is passed.
+                this.textAtAngle(i.toString(), angle, numSkin);
             };
 		}
 
