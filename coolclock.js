@@ -139,7 +139,7 @@ CoolClock.prototype = {
 		this.ctx.arc(x, y, skin.radius, 0, 2*Math.PI, true);
 
 		if (skin.fillColor) {
-			this.ctx.fillStyle = skin.fillColor
+			this.ctx.fillStyle = skin.fillColor;
 			this.ctx.fill();
 		}
 		if (skin.strokeColor || skin.color) {
@@ -157,12 +157,18 @@ CoolClock.prototype = {
 
 		// Determine the draw position so text is centered at x,y.
 		var tSize = this.ctx.measureText(text);
-		x -= tSize.width / 2;
-		// TextMetrics rarely returns a height property: use baseline instead.
+		if (!tSize.width) {
+			tSize.width = 0;
+			// If textmetrics doesn't give us a width, use textAlign instead.
+			this.ctx.textAlign = 'center';
+		}
 		if (!tSize.height) {
 			tSize.height = 0;
+			// TextMetrics rarely returns a height property: use baseline instead.
 			this.ctx.textBaseline = 'middle';
 		}
+		// Set new x and y values.
+		x -= tSize.width / 2;
 		y -= tSize.height / 2;
 
 		// Color the text. Both fill and stroke allowed; stroke above fill.
